@@ -2,15 +2,19 @@ package com.example.interview01.exam.bingo
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.window.Dialog
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import com.example.interview01.databinding.ActivityBingoBinding
 import com.example.interview01.databinding.ItemTextBinding
+import javax.xml.transform.OutputKeys
 import kotlin.random.Random
 
 
@@ -54,6 +58,13 @@ class BingoActivity : AppCompatActivity() {
             mAdapter.list.clear()
             mAdapter.list.addAll(list)
             mAdapter.notifyDataSetChanged()
+
+            mAdapter.bingo = {
+                list.clear()
+                list.addAll((1..25).shuffled().take(9).map { num(it) })
+                mAdapter.list.clear()
+                mAdapter.list.addAll(list)
+            }
         }
     }
 
@@ -75,6 +86,8 @@ class MyAdapter : Adapter<MyAdapter.ViewHolder>() {
     val ver = MutableList(3) { false }
     var left = false
     var right = false
+
+    var bingo: () -> Unit = {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -105,13 +118,30 @@ class MyAdapter : Adapter<MyAdapter.ViewHolder>() {
 
             right = (list[2].boolean && list[4].boolean && list[6].boolean)
 
+            Log.d("!!!", "$hor  $ver  $left  $right")
+
+            val size = hor.count { it } + ver.count { it } + if (left) 1 else 0 + if (right) 1 else 0
+            if (size >= 2) {
+                val builder = AlertDialog.Builder(holder.itemView.context)
+                builder.setTitle("Bingo")
+                builder.setMessage("Bingo")
+                builder.setPositiveButton("Positive") { _, _ ->
+                    // Handle positive button click here
+                    bingo()
+                }
+                builder.setNegativeButton("Negative") { _, _ ->
+                    // Handle negative button click here
+                    bingo()
+                }
+                builder.show()
+            }
+
             this@MyAdapter.notifyDataSetChanged()
         }
         return holder
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        // 設置txtItem要顯示的內容
         holder.binding.txt.text = list[position].num.toString()
         if (list[position].boolean) {
             holder.binding.txt.setTextColor(Color.BLACK)
@@ -141,11 +171,18 @@ class MyAdapter : Adapter<MyAdapter.ViewHolder>() {
 
         if (position == 0 || position == 4 || position == 8) {
             if (left) {
+                binding.left.visibility = View.VISIBLE
+            } else {
+                binding.left.visibility = View.GONE
             }
         }
 
         if (position == 2 || position == 4 || position == 6) {
-
+            if (right) {
+                binding.right.visibility = View.VISIBLE
+            } else {
+                binding.right.visibility = View.GONE
+            }
         }
     }
 
