@@ -13,8 +13,11 @@
         android:theme="@style/Theme.Interview01"
         tools:targetApi="31">
         <activity
+            android:name=".topic.recyclerview.basic.BasicRvActivity"
+            android:exported="true" />
+        <activity
             android:name=".exam.bingo.BingoActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".topic.recyclerview.RecyclerViewActivity"
+            android:name=".topic.recyclerview.advanced.RecyclerViewActivity"
             android:exported="true" />
         <activity
             android:name=".topic.viewbinding.ViewBindingActivity"

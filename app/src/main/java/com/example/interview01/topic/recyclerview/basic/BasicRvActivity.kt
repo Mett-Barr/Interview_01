@@ -1,21 +1,20 @@
-package com.example.interview01.topic.recyclerview
+package com.example.interview01.topic.recyclerview.basic
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.interview01.R
 import com.example.interview01.databinding.ActivityRecyclerViewBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
-class RecyclerViewActivity : AppCompatActivity() {
+class BasicRvActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityRecyclerViewBinding
 
-    private var mAdapter = RvAdapter()
+    private var mAdapter = BasicAdapter()
     private val list = mutableListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,19 +30,18 @@ class RecyclerViewActivity : AppCompatActivity() {
 
     private fun initView() {
         binding.rv.apply {
-            layoutManager = LinearLayoutManager(this@RecyclerViewActivity)
+            layoutManager = LinearLayoutManager(this@BasicRvActivity)
             adapter = mAdapter
         }
     }
 
     private fun initData() {
         lifecycleScope.launch {
-            repeat (3) {
+            repeat(3) {
                 delay(500)
                 list.add(it)
-                mAdapter.submitList(list.toList())
+                mAdapter.setData(list.toList()) // 這裡改為使用 setData
             }
-
             Log.d("!!!", "list = ${list.size}")
         }
     }
@@ -51,12 +49,12 @@ class RecyclerViewActivity : AppCompatActivity() {
     private fun initListener() {
         mAdapter.setClick {
             list.removeAt(it)
-            mAdapter.submitList(list.toList())
+            mAdapter.setData(list.toList()) // 這裡改為使用 setData
         }
 
         binding.addBtn.setOnClickListener {
             list.add(Random.nextInt())
-            mAdapter.submitList(list.toList())
+            mAdapter.setData(list.toList()) // 這裡改為使用 setData
         }
     }
 }
