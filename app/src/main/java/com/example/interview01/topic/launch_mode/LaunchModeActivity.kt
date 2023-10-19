@@ -1,6 +1,7 @@
 package com.example.interview01.topic.launch_mode
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -9,9 +10,11 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -50,11 +53,11 @@ class LaunchModeActivity : ComponentActivity() {
 }
 
 @Composable
-fun LaunchModePage() {
+fun LaunchModePage(text: String = "") {
     val context = LocalContext.current
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = "Launch Mode",
+            text = "Interview 01 $text",
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(vertical = 16.dp)
@@ -80,6 +83,34 @@ fun LaunchModePage() {
                 }
             }
         }
+        Spacer(modifier = Modifier.size(32.dp))
+        Text(
+            text = "Launch from outside",
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.headlineLarge,
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(LaunchFromOutside.entries) {
+                Card(modifier = Modifier
+                    .height(80.dp)
+                    .clickable {
+                        context.startActivity(Intent().setComponent(it.componentName))
+                    }) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = it.name.enumName(),
+                            textAlign = TextAlign.End,
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -88,4 +119,11 @@ enum class LaunchMode(val activity: Class<out Activity>) {
     SINGLE_TOP(SingleTopActivity::class.java),
     SINGLE_TASK(SingleTaskActivity::class.java),
     SINGLE_INSTANCE(SingleInstanceActivity::class.java)
+}
+
+enum class LaunchFromOutside(val componentName: ComponentName) {
+    STANDARD(ComponentName("com.example.launchmodetest", "com.example.launchmodetest.activitys.StandardActivity")),
+    SINGLE_TOP(ComponentName("com.example.launchmodetest", "com.example.launchmodetest.activitys.SingleTopActivity")),
+    SINGLE_TASK(ComponentName("com.example.launchmodetest", "com.example.launchmodetest.activitys.SingleTaskActivity")),
+    SINGLE_INSTANCE(ComponentName("com.example.launchmodetest", "com.example.launchmodetest.activitys.SingleInstanceActivity"))
 }
